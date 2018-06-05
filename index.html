@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+
+
+	<script id="fragShader" type="shader-code">
+	uniform vec2 resolution;
+uniform sampler2D texture;
+void main() {
+	vec2 pos = gl_FragCoord.xy / resolution.xy;
+    gl_FragColor = texture2D(texture,pos);
+}
+	</script>
+
+		<!--SKY SHADER-->
+	<script type="x-shader/x-vertex" id="vertexShader">
+		varying vec3 vWorldPosition;
+		void main() {
+			vec4 worldPosition =  vec4( position, 1.0 );
+			vWorldPosition = worldPosition.xyz;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+		}
+	</script>
+
+	<script type="x-shader/x-fragment" id="fragmentShader">
+		uniform vec3 topColor;
+		uniform vec3 middleColor;
+		uniform vec3 bottomColor;
+		uniform float offset;
+		uniform float exponent;
+		varying vec3 vWorldPosition;
+		
+		float rand(vec2 co);
+
+		void main() {
+			float h = (vWorldPosition.y/1000.0 - 0.1) * 1.0;
+			vec3 fg = mix( middleColor, topColor, max( pow( max( h, 0.0), 0.8 ), 0.0 ) );
+			h = vWorldPosition.y/1000.0*2.0;
+			gl_FragColor = vec4( mix( bottomColor, fg, max( pow( max( h , 0.0), 0.8 ), 0.0 ) ), 1.0 );
+		}
+
+		float rand(vec2 co){
+		    return fract(sin(dot(co.xy,vec2(12.9898,78.233))) * 43758.5453);
+		}
+	</script>
+
+
+
+
+
+
+
+
+
+
+
+
+	<script src="three.min.js"></script>
+	<script src="FirstPersonControls.js"></script>
+	<script src="Lensflare.js"></script>
+	<script src="stats.min.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
