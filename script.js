@@ -14,7 +14,7 @@ var lastTime;
   scene.fog = new THREE.FogExp2(0x000000, 0.00035);
 
   var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 20000);
-  camera.position.set(0, 500, 0); 
+  camera.position.set(0, 1500, 0); 
 
 
   var controls = new THREE.FirstPersonControls( camera );
@@ -70,14 +70,14 @@ var lastTime;
 
     star.position.x = Math.sin(beta)*Math.cos(teta)*rad;
     star.position.z = Math.sin(beta)*Math.sin(teta)*rad;
-    star.position.y = Math.cos(beta)*rad+800;
+    star.position.y = Math.cos(beta)*rad+2800;
 
     star.lookAt(new THREE.Vector3( 0, 1, 0 ));
     sky.add( star );
   }
   var plane = new THREE.Mesh(
     new THREE.PlaneGeometry(62000, 62000),
-    new THREE.MeshBasicMaterial({ color: "#333" })
+    new THREE.MeshBasicMaterial({ color: "0x000000" })
   );
 
   plane.rotation.x = -90 * Math.PI / 180;
