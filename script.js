@@ -11,14 +11,14 @@ var lastTime;
   renderer.setClearColor(0x000000);
 
   var scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x000000, 0.00035);
+  // scene.fog = new THREE.FogExp2(0x000000, 0.00035);
 
   var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 20000);
-  camera.position.set(0, 1500, 0); 
+  camera.position.set(-500, 1500, -500); 
 
 
   var controls = new THREE.FirstPersonControls( camera );
-  controls.movementSpeed = 600;
+  controls.movementSpeed = 400;
   controls.lookSpeed = 0.15;
 
   var clock = new THREE.Clock();
@@ -40,6 +40,7 @@ var lastTime;
   h_fogColor = "hsl("+Math.random()*360+", 41%, 20%)";
   mlt_Color  = "hsl("+Math.random(seed)*360+", 50%,20%)";
 
+
   var vertexShader = document.getElementById( 'vertexShader' ).textContent;
   var fragmentShader = document.getElementById( 'fragmentShader' ).textContent;
   var uniforms = {
@@ -50,7 +51,7 @@ var lastTime;
     exponent:  { type: "f", value: 0.8 }
   };
 
-  var skyGeo = new THREE.SphereGeometry( 3500, 320, 15 );
+  var skyGeo = new THREE.SphereGeometry( 7500, 320, 15 );
   var skyMat = new THREE.ShaderMaterial( { vertexShader: vertexShader, fragmentShader: fragmentShader, uniforms: uniforms, side: THREE.BackSide } );
 
   var sky = new THREE.Mesh( skyGeo, skyMat );
@@ -61,38 +62,39 @@ var lastTime;
     var starMat = new THREE.MeshBasicMaterial({
       color: color, fog: false
     });
-    var size = 0.5 + Math.random(i)*1;
+    // var size = 0.5 + Math.random(i)*1;
+    var size = 10;
     var starGeo = new THREE.PlaneGeometry( size, size, 1 , 1);
     var star = new THREE.Mesh(starGeo,starMat);
     var beta = Math.random(i-39482)*Math.PI*0.96-Math.PI/2*0.96
     var teta = Math.random(i+38403)*Math.PI
-    var rad = 740;
+    var rad = 7400;
 
     star.position.x = Math.sin(beta)*Math.cos(teta)*rad;
     star.position.z = Math.sin(beta)*Math.sin(teta)*rad;
-    star.position.y = Math.cos(beta)*rad+2800;
+    star.position.y = Math.cos(beta)*rad;
 
     star.lookAt(new THREE.Vector3( 0, 1, 0 ));
     sky.add( star );
   }
+
+
   var plane = new THREE.Mesh(
     new THREE.PlaneGeometry(62000, 62000),
-    new THREE.MeshBasicMaterial({ color: "0x000000" })
+    new THREE.MeshBasicMaterial({ color: "black" })
   );
 
   plane.rotation.x = -90 * Math.PI / 180;
   scene.add(plane);
 
 
-scene.add( new THREE.AxesHelper( 1000,1000,1000 ) );
+  scene.add( new THREE.AxesHelper( 1000,1000,1000 ) );
 
   var loader = new THREE.TextureLoader();
 
+  var groupBuild = new THREE.Object3D();
   var geometry = new THREE.BoxBufferGeometry(1, 1, 1);
 
-
-  var groupBuild = new THREE.Object3D();
-  
   geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 1, 0.5, 1 ) );
   
   var buildOneTexture = loader.load("img/house1.jpg", function(texture){
@@ -100,13 +102,15 @@ scene.add( new THREE.AxesHelper( 1000,1000,1000 ) );
     texture.repeat.set(1,1);     
   });
 
-
    var buildTwoTexture = loader.load("img/house1.jpg", function(texture){
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping; 
     texture.repeat.set(1,1);     
   });
 
-  var textureMesh       = new THREE.Texture( generateTexture() );
+
+
+  var color  = "hsl("+Math.random(seed)*360+", 50%,20%)";
+  var textureMesh       = new THREE.Texture( generateTexture( color) );
   textureMesh.needsUpdate    = true;
 
   var material, build;
@@ -124,39 +128,33 @@ var textureFlare0 = textureLoader.load( "texture/lensflare.png" );
 
 
 
-  function myMaterial(cubeSide){
-    var material = [cubeSide,cubeSide,
-      new THREE.MeshBasicMaterial({color: "black" }),
-      new THREE.MeshBasicMaterial({color: "black" }),
-      cubeSide,cubeSide,
-    ];
-    return material;
-  }
 
-  var size = 7000;
+  var size = 9000;
   var count = 0;
   for(var i=0;i<size;i+=1000){
     for(var j=0;j<size;j+=1000){
       var obj = new THREE.MeshBasicMaterial({map: textureMesh});
-      var height = [500,200];
+      var height = [500,300];
 
-      if(  (i>=1000 && i<=5000) && (j>=1000 && j<=5000) ){
-        obj = new THREE.MeshBasicMaterial({map: textureMesh, color: "green"});        
-        height = [800, 400]; 
+      if(  (i>=2000 && i<=6000) && (j>=2000 && j<=6000) ){
+        // obj = new THREE.MeshBasicMaterial({map: textureMesh, color: "green"});        
+        height = [1000, 400]; 
+        if(  (i>=3000 && i<=5000) && (j>=3000 && j<=5000) ){
+          // obj = new THREE.MeshBasicMaterial({map: textureMesh, color: "blue"});        
+          height = [1600, 900];
+          if( i == 4000  && j ==4000){
+            // obj = new THREE.MeshBasicMaterial({map: textureMesh, color: "red"}); 
+            height = [2500, 1500];       
+          }
+        }
       }
 
-      if(  (i>=2000 && i<=4000) && (j>=2000 && j<=4000) ){
-        obj = new THREE.MeshBasicMaterial({map: textureMesh, color: "blue"});        
-        height = [1100, 700]; 
-      }
-      if( i == 3000 && j == 3000){
-        obj = new THREE.MeshBasicMaterial({map: textureMesh, color: "red"}); 
-        height = [1800, 1000];       
-      }
 
-      groupBuild.add( smallBuild(130, height, 130, i*0.85, j*0.85, obj));
+      groupBuild.add( smallBuild(300, height, 300, i*1.2, j*1.2, obj));
       count++; 
-      addLight(i*0.85, 0, j*0.85);
+      // addLight(i*1.3, 0, j*1.3);
+      addLight(i*1.2+50, 0, j*1.2+50);
+      addLight(i*1.2+60, 0, j*1.2+60);
     }
   }
 
@@ -169,25 +167,33 @@ var textureFlare0 = textureLoader.load( "texture/lensflare.png" );
   scene.add(light);
 
 
-
+function myMaterial(cubeSide){
+  var material = [cubeSide,cubeSide,
+    new THREE.MeshBasicMaterial({color: "black" }),
+    new THREE.MeshBasicMaterial({color: "black" }),
+    cubeSide,cubeSide,
+  ];
+  return material;
+}
 
 function smallBuild(width, height, depth, posX, posZ, tex){
   var smallBuildGroup = new THREE.Object3D();
 
-  // console.log(texSide);
-
-  var side  =  tex || new THREE.MeshBasicMaterial({map: textureMesh });
   
-  var size = 4;
-  
+  var size = 3;
+    
   for(var i=0;i<size;i++){
     for(var j=0;j<size;j++){
-      // var side  = new THREE.ShaderMaterial({fragmentShader:shaderCode});
+      color  = "hsl("+Math.random(j+i)*360+", 50%,20%)";
+      textureMesh       = new THREE.Texture( generateTexture( color) );
+      textureMesh.needsUpdate    = true;
+
+      var side  =  tex || new THREE.MeshBasicMaterial({map: textureMesh});
       
       var material = myMaterial(side);
       build = new THREE.Mesh(geometry, material);
 
-      var scaleY =  Math.random() * Math.random() * Math.random() * Math.random() * height[0] + height[1];
+      var scaleY =  Math.random() * Math.random() * Math.random()  * height[0] + height[1];
       
       build.scale.x = width;
       build.scale.y = scaleY;
@@ -195,6 +201,7 @@ function smallBuild(width, height, depth, posX, posZ, tex){
 
       build.position.x = i * (width + 50) + posX;
       build.position.z = j * (depth + 50) + posZ;
+      // addLight(i * (width + 50) + posX, scaleY, j * (depth + 50) + posZ);
 
       smallBuildGroup.add(build);
       
@@ -288,30 +295,30 @@ function addLight(x,y,z){
   // lineCity(100,100,100);
 
   function lineCity(width, height, depth){
-  var lineBuild = new THREE.Object3D();
-  lenght = 40;
-  var x = 0;
-  var j=0;
-  while(j!=2){
+    var lineBuild = new THREE.Object3D();
+    lenght = 40;
+    var x = 0;
+    var j=0;
+    while(j!=2){
 
-    for(var i=0;i<lenght;i++){
-      if(i==lenght-1){x=200;}
-      var side  = new THREE.MeshBasicMaterial({map: textureMesh });
-      var material = myMaterial(side);
-      build = new THREE.Mesh(geometry, material);
+      for(var i=0;i<lenght;i++){
+        if(i==lenght-1){x=200;}
+        var side  = new THREE.MeshBasicMaterial({map: textureMesh });
+        var material = myMaterial(side);
+        build = new THREE.Mesh(geometry, material);
 
-      height = Math.random() * Math.random() * Math.random() * Math.random() * 700 + 30;
+        height = Math.random() * Math.random() * Math.random() * Math.random() * 700 + 30;
 
-      if(height <= 40) continue;
-      build.scale.x = width;
-      build.scale.y = height;
-      build.scale.z = depth;
+        if(height <= 40) continue;
+        build.scale.x = width;
+        build.scale.y = height;
+        build.scale.z = depth;
 
-      // build.position.x = i * width - 1000;
-      build.position.set(x, 0, i*(width) - 1000);
-      lineBuild.add(build);
+        // build.position.x = i * width - 1000;
+        build.position.set(x, 0, i*(width) - 1000);
+        lineBuild.add(build);
 
-    }
+      }
     
     j++;
   }
@@ -323,7 +330,9 @@ function addLight(x,y,z){
 
 
   lastTime = performance.now();
- function generateTexture() {
+ function generateTexture(color) {
+  var seed = Math.random();
+
     var width = 512;
     var height = 1024;
 
@@ -347,8 +356,8 @@ function addLight(x,y,z){
 
     for (var x = 0; x < 32; x += 8) {
       for (var y = 2; y < 64; y += 12) {
-        // var value = Math.floor(Math.random() * 128);
-        var value = "255"; 
+        var value = Math.floor(Math.random() * 255);
+        // var value = "hsl("+Math.random(1)*360+", 50%,20%)"; 
         ctx.fillStyle = "rgb(" + [value, value, value].join(",") + ")";
         ctx.fillRect(x+2, y+2, 4, 8);
       }
@@ -356,12 +365,13 @@ function addLight(x,y,z){
 
     context.imageSmoothingEnabled = false;
     context.drawImage(canvas, 0, 0, width, height);
-    context.lineWidth=10;
 
-
-
-    context.strokeStyle = "red";
+    context.lineWidth = 80;
+    context.strokeStyle = color;
     context.strokeRect( 0, 0, width , height);
+
+
+
 
     return canvas2;
 
