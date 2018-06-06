@@ -8,16 +8,6 @@
 <body>
 	<canvas id="canvas"></canvas>
 
-
-	<script id="fragShader" type="shader-code">
-	uniform vec2 resolution;
-uniform sampler2D texture;
-void main() {
-	vec2 pos = gl_FragCoord.xy / resolution.xy;
-    gl_FragColor = texture2D(texture,pos);
-}
-	</script>
-
 		<!--SKY SHADER-->
 	<script type="x-shader/x-vertex" id="vertexShader">
 		varying vec3 vWorldPosition;

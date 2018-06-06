@@ -18,7 +18,7 @@ var lastTime;
 
 
   var controls = new THREE.FirstPersonControls( camera );
-  controls.movementSpeed = 400;
+  controls.movementSpeed = 4000;
   controls.lookSpeed = 0.15;
 
   var clock = new THREE.Clock();
@@ -88,7 +88,7 @@ var lastTime;
   scene.add(plane);
 
 
-  scene.add( new THREE.AxesHelper( 1000,1000,1000 ) );
+  scene.add( new THREE.AxesHelper( 10000,10000,10000 ) );
 
   var loader = new THREE.TextureLoader();
 
@@ -115,15 +115,28 @@ var lastTime;
 
   var material, build;
 
+	var light = new THREE.PointLight( 0xffffff, 0, 0 );
+	var textureFlare0 = loader.load( "texture/lensflare.png" );
 
+	function addLight(x,y,z){
+    var lensflare = new THREE.Lensflare();
+    lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100,  0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 170, 0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 220, 0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 80,  0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 70,  0 ) );
 
-var textureLoader = new THREE.TextureLoader();
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 70,  0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 220, 0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100, 0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 90,  0 ) );
+    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 80,  0 ) );
 
+    lensflare.position.set(x, y, z);
+    // lensflare.customUpdateCallback = lensFlareUpdateCallback;
 
-var light = new THREE.PointLight( 0xffffff, 1.5, 2000 );
-var textureFlare0 = textureLoader.load( "texture/lensflare.png" );
-
-
+    light.add( lensflare );
+}
 
 
 
@@ -131,8 +144,10 @@ var textureFlare0 = textureLoader.load( "texture/lensflare.png" );
 
   var size = 9000;
   var count = 0;
+
   for(var i=0;i<size;i+=1000){
     for(var j=0;j<size;j+=1000){
+
       var obj = new THREE.MeshBasicMaterial({map: textureMesh});
       var height = [500,300];
 
@@ -151,17 +166,18 @@ var textureFlare0 = textureLoader.load( "texture/lensflare.png" );
 
 
       groupBuild.add( smallBuild(300, height, 300, i*1.2, j*1.2, obj));
-      count++; 
-      // addLight(i*1.3, 0, j*1.3);
-      addLight(i*1.2+50, 0, j*1.2+50);
-      addLight(i*1.2+60, 0, j*1.2+60);
+      count++;
+      if(i==0) continue;
+	    addLight(i*1.2+50, 250, j*1.2+50);
+	    // addLight(i*1.2+75, 100, j*1.2+50);
     }
   }
 
-  groupBuild.position.x = -3000;
-  groupBuild.position.z = -3000;
-  light.position.x = -3000;
-  light.position.z = -3000;
+  groupBuild.position.x = -5500;
+  groupBuild.position.z = -5500;
+
+  light.position.x = -5500;
+  light.position.z = -5500;
 
   scene.add(groupBuild);
   scene.add(light);
@@ -175,7 +191,6 @@ function myMaterial(cubeSide){
   ];
   return material;
 }
-
 function smallBuild(width, height, depth, posX, posZ, tex){
   var smallBuildGroup = new THREE.Object3D();
 
@@ -184,7 +199,9 @@ function smallBuild(width, height, depth, posX, posZ, tex){
     
   for(var i=0;i<size;i++){
     for(var j=0;j<size;j++){
+
       color  = "hsl("+Math.random(j+i)*360+", 50%,20%)";
+
       textureMesh       = new THREE.Texture( generateTexture( color) );
       textureMesh.needsUpdate    = true;
 
@@ -201,7 +218,6 @@ function smallBuild(width, height, depth, posX, posZ, tex){
 
       build.position.x = i * (width + 50) + posX;
       build.position.z = j * (depth + 50) + posZ;
-      // addLight(i * (width + 50) + posX, scaleY, j * (depth + 50) + posZ);
 
       smallBuildGroup.add(build);
       
@@ -213,125 +229,10 @@ function smallBuild(width, height, depth, posX, posZ, tex){
     return smallBuildGroup;
 }
 
-function addLight(x,y,z){
-    var lensflare = new THREE.Lensflare();
-    lensflare.addElement( new THREE.LensflareElement( textureFlare0, 60,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 170, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 220, 0 ) );
-    lensflare.addElement( new THREE.LensflareElement( textureFlare0, 80,  0 ) );
-    lensflare.addElement( new THREE.LensflareElement( textureFlare0, 70,  0 ) );
-
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 70,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 220, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 90,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 80,  0 ) );
-
-    lensflare.position.set(x, y, z);
-    // lensflare.customUpdateCallback = lensFlareUpdateCallback;
-
-    light.add( lensflare );
-}
-
-
-
-
-
-
-  // buildOfCirckle(400, 8, 100, 150, 125, -500, -500, -25);
-  // buildOfCirckle(150, 4, 100, 150, 125, -550, -500);
-
-  //buildOfCirckle(r,countOfBuild, width, height, depth, posX){
-
-
-
-  function buildOfCirckle(r,countOfBuild, width, height, depth, posX, posZ,ry){
-    var circleBuild = new THREE.Object3D();
-    var countOfBuild = countOfBuild || 4;
-    var wrap = 0;
-    var radius = r || 100;
-    var posX = posX || 0;
-    var ry = ry || 0;
-
-    var count = 0;
-    for(var i=0; i<countOfBuild; i++){
-      height =  Math.random() * Math.random() * Math.random() * Math.random() * 700 + 200;
-      var side  = new THREE.MeshBasicMaterial({map: textureMesh });
-      if(count == 0){
-        side =   new THREE.MeshBasicMaterial({map: textureMesh, color: "red" });
-      }
-      var material = myMaterial(side);
-      build = new THREE.Mesh(geometry, material);
-      
-      build.scale.x = width;
-      build.scale.y = height;
-      build.scale.z = depth;
-
-      var angle = 2 / countOfBuild * i * Math.PI;
-
-      build.position.x = wrap + radius * Math.sin(angle);
-      build.position.z = wrap + radius * Math.cos(angle);
-     
-      if(count == 0 || count == (countOfBuild/2) ){
-        build.rotation.y = 90 * Math.PI / 180;
-        build.position.z = wrap + radius * Math.cos(angle) + depth+width;
-        build.position.x = wrap + radius * Math.sin(angle) - depth+width;
-      }
-
-
-      count++;
-      circleBuild.add(build);
-      circleBuild.position.x  = posX - 50;
-      circleBuild.position.z  = posZ - 125;
-
-      circleBuild.rotation.y  = ry * Math.PI/180;
-
-    } 
-      scene.add(circleBuild);
-  }
-
-
-
-  // lineCity(100,100,100);
-
-  function lineCity(width, height, depth){
-    var lineBuild = new THREE.Object3D();
-    lenght = 40;
-    var x = 0;
-    var j=0;
-    while(j!=2){
-
-      for(var i=0;i<lenght;i++){
-        if(i==lenght-1){x=200;}
-        var side  = new THREE.MeshBasicMaterial({map: textureMesh });
-        var material = myMaterial(side);
-        build = new THREE.Mesh(geometry, material);
-
-        height = Math.random() * Math.random() * Math.random() * Math.random() * 700 + 30;
-
-        if(height <= 40) continue;
-        build.scale.x = width;
-        build.scale.y = height;
-        build.scale.z = depth;
-
-        // build.position.x = i * width - 1000;
-        build.position.set(x, 0, i*(width) - 1000);
-        lineBuild.add(build);
-
-      }
-    
-    j++;
-  }
-
-  scene.add(lineBuild);
-  }
-
-
-
 
   lastTime = performance.now();
  function generateTexture(color) {
-  var seed = Math.random();
+  	var seed = Math.random();
 
     var width = 512;
     var height = 1024;
@@ -357,9 +258,8 @@ function addLight(x,y,z){
     for (var x = 0; x < 32; x += 8) {
       for (var y = 2; y < 64; y += 12) {
         var value = Math.floor(Math.random() * 255);
-        // var value = "hsl("+Math.random(1)*360+", 50%,20%)"; 
         ctx.fillStyle = "rgb(" + [value, value, value].join(",") + ")";
-        ctx.fillRect(x+2, y+2, 4, 8);
+        ctx.fillRect(x+2, y+1, 4, 8);
       }
     }
 
@@ -373,27 +273,31 @@ function addLight(x,y,z){
 
 
 
-    return canvas2;
-
-    
-  }
+    return canvas2;    
+ }
 
 
 
 	function loop(){
-        stats.update();
+    stats.update();
+
     var time = performance.now() / 1000;
     controls.update(time - lastTime );
-    console.log(camera.position.y);
+
+    if(camera.position.y >= 7000 ) {camera.position.y = 7000};
+    if(camera.position.x >= 7000 ) {camera.position.x = 7000};
+    if(camera.position.z >= 7000 ) {camera.position.z = 7000};
+
     if(camera.position.y <= 300 ) {camera.position.y = 300};
 
+    if(camera.position.x <= -3500 ) {camera.position.x = -3500};
+    if(camera.position.z <= -3500 ) {camera.position.z = -3500};
+
     renderer.render(scene, camera);
+
     sky.position.x = camera.position.x;
     sky.position.z = camera.position.z;
 
-    star.position.y = camera.position.y;
-    star.position.x = camera.position.x;
-    star.position.z = camera.position.z;
     lastTime = time;
 		requestAnimationFrame(function(){loop();});
 	}
