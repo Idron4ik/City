@@ -1,5 +1,5 @@
 window.onload = function(){
-var lastTime;
+  var lastTime;
   var width = window.innerWidth;
   var height = window.innerHeight;
   var canvas = document.getElementById("canvas");
@@ -13,12 +13,12 @@ var lastTime;
   var scene = new THREE.Scene();
   // scene.fog = new THREE.FogExp2(0x000000, 0.00035);
 
-  var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 20000);
+  var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
   camera.position.set(-500, 1500, -500); 
 
 
   var controls = new THREE.FirstPersonControls( camera );
-  controls.movementSpeed = 4000;
+  controls.movementSpeed = 1000;
   controls.lookSpeed = 0.15;
 
   var clock = new THREE.Clock();
@@ -26,13 +26,9 @@ var lastTime;
   stats = new Stats();
   document.body.appendChild( stats.dom );
 
-
-    
-
-
-  var l_fogColor = 0x220052; //bottom fog, sky and light color
-  var m_fogColor = 0x996060; //middle fog and sky color
-  var h_fogColor = 0x331E28; //top fog and sky color
+  var l_fogColor = 0x220052; 
+  var m_fogColor = 0x996060; 
+  var h_fogColor = 0x331E28; 
 
   var seed = Math.random();
   l_fogColor = "hsl("+Math.random(seed)*360+", 100%,32%)";
@@ -80,7 +76,7 @@ var lastTime;
 
 
   var plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(62000, 62000),
+    new THREE.PlaneGeometry(20000, 20000),
     new THREE.MeshBasicMaterial({ color: "black" })
   );
 
@@ -88,28 +84,16 @@ var lastTime;
   scene.add(plane);
 
 
-  scene.add( new THREE.AxesHelper( 10000,10000,10000 ) );
-
   var loader = new THREE.TextureLoader();
 
   var groupBuild = new THREE.Object3D();
+
   var geometry = new THREE.BoxBufferGeometry(1, 1, 1);
 
   geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 1, 0.5, 1 ) );
   
-  var buildOneTexture = loader.load("img/house1.jpg", function(texture){
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; 
-    texture.repeat.set(1,1);     
-  });
-
-   var buildTwoTexture = loader.load("img/house1.jpg", function(texture){
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; 
-    texture.repeat.set(1,1);     
-  });
-
-
-
   var color  = "hsl("+Math.random(seed)*360+", 50%,20%)";
+  
   var textureMesh       = new THREE.Texture( generateTexture( color) );
   textureMesh.needsUpdate    = true;
 
@@ -121,25 +105,18 @@ var lastTime;
 	function addLight(x,y,z){
     var lensflare = new THREE.Lensflare();
     lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 170, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 220, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 80,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 70,  0 ) );
-
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 70,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 220, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 100, 0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 90,  0 ) );
-    // lensflare.addElement( new THREE.LensflareElement( textureFlare0, 80,  0 ) );
 
     lensflare.position.set(x, y, z);
-    // lensflare.customUpdateCallback = lensFlareUpdateCallback;
-
     light.add( lensflare );
-}
+  }
 
 
 
+  var loader = new THREE.TextureLoader();
+  var buildOneTexture = loader.load("http://i.imgur.com/cYQ3IEb.jpg?1", function(texture){
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; 
+    texture.repeat.set(1,1);     
+  });
 
 
   var size = 9000;
@@ -147,7 +124,6 @@ var lastTime;
 
   for(var i=0;i<size;i+=1000){
     for(var j=0;j<size;j+=1000){
-
       var obj = new THREE.MeshBasicMaterial({map: textureMesh});
       var height = [500,300];
 
@@ -169,7 +145,6 @@ var lastTime;
       count++;
       if(i==0) continue;
 	    addLight(i*1.2+50, 250, j*1.2+50);
-	    // addLight(i*1.2+75, 100, j*1.2+50);
     }
   }
 
@@ -183,54 +158,53 @@ var lastTime;
   scene.add(light);
 
 
-function myMaterial(cubeSide){
+  function myMaterial(cubeSide){
   var material = [cubeSide,cubeSide,
     new THREE.MeshBasicMaterial({color: "black" }),
     new THREE.MeshBasicMaterial({color: "black" }),
     cubeSide,cubeSide,
   ];
   return material;
-}
-function smallBuild(width, height, depth, posX, posZ, tex){
-  var smallBuildGroup = new THREE.Object3D();
-
-  
-  var size = 3;
-    
-  for(var i=0;i<size;i++){
-    for(var j=0;j<size;j++){
-
-      color  = "hsl("+Math.random(j+i)*360+", 50%,20%)";
-
-      textureMesh       = new THREE.Texture( generateTexture( color) );
-      textureMesh.needsUpdate    = true;
-
-      var side  =  tex || new THREE.MeshBasicMaterial({map: textureMesh});
-      
-      var material = myMaterial(side);
-      build = new THREE.Mesh(geometry, material);
-
-      var scaleY =  Math.random() * Math.random() * Math.random()  * height[0] + height[1];
-      
-      build.scale.x = width;
-      build.scale.y = scaleY;
-      build.scale.z = depth;
-
-      build.position.x = i * (width + 50) + posX;
-      build.position.z = j * (depth + 50) + posZ;
-
-      smallBuildGroup.add(build);
-      
-      
-    }
   }
+
+
+  function smallBuild(width, height, depth, posX, posZ, tex){
+    var smallBuildGroup = new THREE.Object3D();
+
+    
+    var size = 3;
       
- 
+    for(var i=0;i<size;i++){
+      for(var j=0;j<size;j++){
+
+        color  = "hsl("+Math.random(j+i)*360+", 50%,20%)";
+
+        textureMesh       = new THREE.Texture( generateTexture( color) );
+        textureMesh.needsUpdate    = true;
+
+        var side  =  tex || new THREE.MeshBasicMaterial({map: textureMesh});
+        
+        var material = myMaterial(side);
+        build = new THREE.Mesh(geometry, material);
+
+        var scaleY =  Math.random() * Math.random() * Math.random()  * height[0] + height[1];
+        
+        build.scale.x = width;
+        build.scale.y = scaleY;
+        build.scale.z = depth;
+
+        build.position.x = i * (width + 50) + posX;
+        build.position.z = j * (depth + 50) + posZ;
+
+        smallBuildGroup.add(build);
+        
+        
+      }
+    }
     return smallBuildGroup;
-}
+  }
 
 
-  lastTime = performance.now();
  function generateTexture(color) {
   	var seed = Math.random();
 
@@ -270,15 +244,14 @@ function smallBuild(width, height, depth, posX, posZ, tex){
     context.strokeStyle = color;
     context.strokeRect( 0, 0, width , height);
 
-
-
-
     return canvas2;    
  }
 
 
+  lastTime = performance.now();
 
 	function loop(){
+
     stats.update();
 
     var time = performance.now() / 1000;
@@ -290,8 +263,8 @@ function smallBuild(width, height, depth, posX, posZ, tex){
 
     if(camera.position.y <= 300 ) {camera.position.y = 300};
 
-    if(camera.position.x <= -3500 ) {camera.position.x = -3500};
-    if(camera.position.z <= -3500 ) {camera.position.z = -3500};
+    if(camera.position.x <= -5000 ) {camera.position.x = -5000};
+    if(camera.position.z <= -5000 ) {camera.position.z = -5000};
 
     renderer.render(scene, camera);
 

@@ -3,12 +3,14 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="style/main.css">
 </head>
 <body>
 	<canvas id="canvas"></canvas>
 
-		<!--SKY SHADER-->
+	
+
+	<!--SKY SHADER-->
 	<script type="x-shader/x-vertex" id="vertexShader">
 		varying vec3 vWorldPosition;
 		void main() {
@@ -51,11 +53,19 @@
 
 
 
-	<script src="three.min.js"></script>
-	<script src="FirstPersonControls.js"></script>
-	<script src="ObJLoader.js"></script>
-	<script src="Lensflare.js"></script>
-	<script src="stats.min.js"></script>
-	<script src="script.js"></script>
+	<script src="libs/three.min.js"></script>
+
+	<script src="libs/FirstPersonControls.js"></script>
+	<script src="libs/stats.min.js"></script>
+
+	<script src="js/script.js"></script>
+
+
+
+
+
+	<script src="libs/Lensflare.js"></script>
+
+
 </body>
 </html>
